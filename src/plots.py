@@ -13,9 +13,11 @@ COLOR_DICT = {
 }
 METRIC_NAMES = {
     'elbo': 'ELBO', 
-    'mape': 'MAPE', 
-    'diameter_80pct': 'Diameter 80%', 
-    'confidence_error': 'Confidence Error'
+    'mape': 'MAPE',
+    'mae': 'MAE',
+    'diameter_80pct': 'Percentual diameter 80%', 
+    'diameter_80pct_abs': 'Absolute diameter 80%',
+    'confidence_error': 'Confidence Error',
 }
 
 def plot_metrics(metrics):

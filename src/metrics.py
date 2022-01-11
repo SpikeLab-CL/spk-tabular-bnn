@@ -38,7 +38,8 @@ def get_metrics(
     target, 
     preprocessor, 
     inv_transf, 
-    n_samples=100
+    n_samples=100,
+    device='cpu'
 ):
     
     #sample from aprox posterior and compute quantiles and model average
@@ -49,7 +50,8 @@ def get_metrics(
         features,
         data, 
         n_samples=n_samples, 
-        varbls=['_RETURN']
+        varbls=['_RETURN'],
+        device=device,
     )['_RETURN']
 
     coverage_curves = get_empiric_coverage_curve(
@@ -80,13 +82,15 @@ def get_metrics(
     mertic_formulas = {
         "coverage_80pct": f"({target} >= {target}_q10) & ({target} <= {target}_q90)",
         "diameter_80pct": f"({target}_q90 - {target}_q10)/{target}",
-        "mape": f"abs({target}-{target}_mean)/{target}"
+        "diameter_80pct_abs": f"({target}_q90 - {target}_q10)",
+        "mape": f"abs({target}-{target}_mean)/{target}",
+        "mae": f"abs({target}-{target}_mean)"
     }                  
     
     for metric, formula in mertic_formulas.items():
         eval_data[metric] = eval_data.eval(formula)
                       
-    metrics = eval_data.groupby('partition')[list(mertic_formulas.keys())].mean()   
+    metrics = eval_data.groupby('partition')[list(mertic_formulas.keys())].apply(lambda x: np.mean(x[x < np.infty]))
     
     return pd.concat([metrics, integral], axis=1)
 

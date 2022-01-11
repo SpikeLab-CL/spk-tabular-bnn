@@ -46,10 +46,11 @@ def get_predictions_pyro(
     features,
     df, 
     n_samples=100, 
-    varbls=['_RETURN']
+    varbls=['_RETURN'],
+    device='cpu',
 ):
     
-    x = torch.Tensor(preprocessor.transform(df[features]))
+    x = torch.Tensor(preprocessor.transform(df[features])).to(device)
     
     predictive = Predictive(model, guide=guide, num_samples=n_samples, return_sites=varbls)
     samples_post = {v: predictive(x, None)[v].cpu().detach().numpy() for v in varbls}
