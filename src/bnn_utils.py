@@ -9,30 +9,26 @@ from pyro.nn.module import PyroSample
 #I'm not retraining the embeddings and batch norm on the bayesian opt
 FORBIDDEN_NAMES = ["embeddings", "bn.bn"]
 
-
 def as_pyro_module(
-    module, 
-    scale=1, 
-    tabnet_centered=True, 
-    forbidden_names=FORBIDDEN_NAMES
+    module:torch.nn.module, 
+    scale:float=1.0, 
+    tabnet_centered:bool=True, 
+    forbidden_names:list=FORBIDDEN_NAMES,
 ):
     to_pyro_module_(module, recurse=True)
     for module_name, sub_module in module.named_modules():
         if all(not name in module_name for name in forbidden_names):
             for param_name, param in list(sub_module.named_parameters(recurse=False)):
                 
-                #setattr(m, n, PyroSample(dist.Normal(torch.zeros_like(p), scale*torch.ones_like(p)).to_event()))
+                scale_tensor = scale*torch.ones_like(param)
                 if tabnet_centered:
-                    setattr(
-                        sub_module, 
-                        param_name, 
-                        PyroSample(dist.Normal(param, scale*torch.ones_like(param)).to_event())
-                    )
+                    mean_tensor = param
                 else:
-                    setattr(
+                    mean_tensor = torch.zeros_like(param)
+                setattr(
                         sub_module, 
                         param_name, 
-                        PyroSample(dist.Normal(torch.zeros_like(param), scale*torch.ones_like(param)).to_event())
+                        PyroSample(dist.Normal(mean_tensor, scale_tensor).to_event())
                     )
         else:
             for param_name, param in list(sub_module.named_parameters(recurse=False)):
