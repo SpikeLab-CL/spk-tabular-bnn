@@ -80,11 +80,11 @@ def get_metrics(
     
     #compute model quality metrics (precision and uncertenty estimation)                 
     mertic_formulas = {
-        "coverage_80pct": f"({target} >= {target}_q10) & ({target} <= {target}_q90)",
-        "diameter_80pct": f"({target}_q90 - {target}_q10)/{target}",
-        "diameter_80pct_abs": f"({target}_q90 - {target}_q10)",
-        "mape": f"abs({target}-{target}_mean)/{target}",
-        "mae": f"abs({target}-{target}_mean)"
+        "MAPE": f"abs({target}-{target}_mean)/{target}",
+        "MAE": f"abs({target}-{target}_mean)",
+        "emp_coverage_80pct": f"({target} >= {target}_q10) & ({target} <= {target}_q90)",
+        "perc_lenght_80pct": f"({target}_q90 - {target}_q10)/{target}",
+        "abs_lenght_80pct": f"({target}_q90 - {target}_q10)",
     }                  
     
     for metric, formula in mertic_formulas.items():

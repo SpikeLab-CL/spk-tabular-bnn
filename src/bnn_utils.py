@@ -10,10 +10,10 @@ from pyro.nn.module import PyroSample
 FORBIDDEN_NAMES = ["embeddings", "bn.bn"]
 
 def as_pyro_module(
-    module:torch.nn.module, 
-    scale:float=1.0, 
-    tabnet_centered:bool=True, 
-    forbidden_names:list=FORBIDDEN_NAMES,
+    module, 
+    scale=1.0, 
+    tabnet_centered=True, 
+    forbidden_names=FORBIDDEN_NAMES,
 ):
     to_pyro_module_(module, recurse=True)
     for module_name, sub_module in module.named_modules():

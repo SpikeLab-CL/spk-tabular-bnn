@@ -13,10 +13,11 @@ COLOR_DICT = {
 }
 METRIC_NAMES = {
     'elbo': 'ELBO', 
-    'mape': 'MAPE',
-    'mae': 'MAE',
-    'diameter_80pct': 'Percentual diameter 80%', 
-    'diameter_80pct_abs': 'Absolute diameter 80%',
+    'MAPE': 'MAPE',
+    'MAE': 'MAE',
+    'emp_coverage_80pct': 'Empirical coverage for 80%',
+    'perc_lenght_80pct': 'Percentual length 80%', 
+    'abs_lenght_80pct': 'Absolute length 80%',
     'confidence_error': 'Confidence Error',
 }
 
