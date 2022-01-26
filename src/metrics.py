@@ -2,6 +2,13 @@ import numpy as np
 import pandas as pd
 from bnn_utils import get_predictions_pyro
 
+def compute_confidence_intervals(valid_post, inv_transf, coverages):
+    cov_array = np.array(coverages)   
+    perc = np.concatenate([(1-cov_array) / 2, (1+cov_array) / 2])
+    quantiles = inv_transf(np.quantile(valid_post, perc, axis=0)).squeeze()
+    lower, upper = quantiles[:len(coverages), :], quantiles[len(coverages):, :]
+    return lower, upper
+
 def get_empiric_coverage_curve(
     valid_post,
     data,
@@ -10,9 +17,7 @@ def get_empiric_coverage_curve(
     coverages=np.linspace(.001, .999, 50)
 ):
 
-    perc = np.concatenate([(1-coverages) / 2, (1+coverages) / 2])
-    quantiles = inv_transf(np.quantile(valid_post, perc, axis=0)).squeeze()
-    lower, upper = quantiles[:len(coverages), :], quantiles[len(coverages):, :]
+    lower, upper = compute_confidence_intervals(valid_post, inv_transf, coverages)
     in_interval = (
         (data[target].values.reshape(1, -1) >= lower) & (data[target].values.reshape(1, -1) <= upper)
     )
