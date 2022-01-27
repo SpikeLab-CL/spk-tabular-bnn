@@ -73,23 +73,36 @@ def plot_areas(
     title: str=None,
 ):
     fig_list = []
-    x = data[index_col].values if index_col is not None else data.index.values
-    x = np.concatenate([x, x[::-1]]) #we need to add the reverse of the index
-    
+    x = data[index_col] if index_col is not None else data.index.values    
     for area in area_config:
         y = np.concatenate([data[area["upper_column"]].values, data[area["lower_column"]].values[::-1]])
         fig_list.append(
             go.Scatter(
                 name=area["label"] if "label" in area.keys() else None,
                 x=x,
-                y=y,
-                fill='toself',
-                fillcolor=area["color"],
-                line_color='rgba(255,255,255,0)',
+                y=data[area["upper_column"]].values,
+                mode='lines',
+                marker=dict(color=area["color"]),
+                line=dict(width=0),
                 showlegend=area["showlegend"] if "showlegend" in area.keys() else True,
 
             )
         )
+        fig_list.append(
+            go.Scatter(
+                name=area["label"] if "label" in area.keys() else None,
+                x=x,
+                y=data[area["lower_column"]].values,
+                mode='lines',
+                marker=dict(color=area["color"]),
+                line=dict(width=0),
+                fillcolor=area["color"],
+                fill='tonexty',
+                showlegend=False,
+
+            )
+        )
+        
     fig = go.Figure(fig_list)
     add_title_and_axis(fig, xaxis_title, yaxis_title, title)
     return fig
